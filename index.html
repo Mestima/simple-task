@@ -12,7 +12,6 @@
 				let response = await fetch(link);
 				if (response.ok) {
 					let json = await response.json();
-					
 					return json;
 				} else {
 					alert("Ошибка HTTP: " + response.status);
