@@ -26,18 +26,21 @@
 				var nds = 0;
 				var totalNds = 0;
 				for (var i = 0; i < len; i++) {
-					total += parseFloat(data[i]['Цена']);
+					total += parseFloat(data[i]['price']);
 					document.getElementById('data').innerHTML += `
 						<tr>
 							<th scope="row">${i+1}</th>
-							<td>${data[i]['Артикул']}</td>
-							<td>${data[i]['Номенкулатура']}</td>
-							<td>${data[i]['Цена']}</td>
+							<td>${data[i]['articul']}</td>
+							<td>${data[i]['name']}</td>
+							<td>${data[i]['amount']}</td>
+							<td>${data[i]['price']}</td>
 						</tr>
 					`;
 				}
-				nds = total / 100 * config.ndsPercent;
-				totalNds = total + nds;
+				
+				total = parseFloat(total).toFixed(3);
+				nds = (total / 100 * config.ndsPercent).toFixed(3);
+				totalNds = (parseFloat(total) + parseFloat(nds)).toFixed(3);
 				
 				document.getElementById('total').innerText += total.toString();
 				document.getElementById('nds').innerText += nds.toString();
@@ -66,6 +69,7 @@
 						<th scope="col">№</th>
 						<th scope="col">Артикул</th>
 						<th scope="col">Номенкулатура</th>
+						<th scope="col">Количество</th>
 						<th scope="col">Цена</th>
 					</tr>
 				</thead>
