@@ -8,6 +8,44 @@
 	</head>
 	<body>
 		<script type="text/javascript">
+			const ndsPercent = config.ndsPercent * 0.01;
+			var useRuble = false; // false - euro, true - ruble
+			var prefix = 'EUR';
+			
+			const calcTotal = (total) => {
+				if (!useRuble) {
+					return parseFloat(total).toFixed(3);
+				} else {
+					return parseFloat(total * config.euroRate).toFixed(3);
+				}
+			};
+			
+			const updateAll = () => {
+				document.getElementById('data').innerHTML = '';
+				document.getElementById('total').innerText = '';
+				document.getElementById('nds').innerText = '';
+				document.getElementById('totalNds').innerText = '';
+				document.getElementById('info').innerText = '';
+				writeData();
+			};
+			
+			const changeCurrency = () => {
+				const euro = document.getElementById('useEuro');
+				const ruble = document.getElementById('useRuble');
+				if (!useRuble) {
+					useRuble = true;
+					prefix = 'RUB';
+					ruble.checked = true;
+					euro.checked = false;
+				} else {
+					useRuble = false;
+					prefix = 'EUR';
+					ruble.checked = false;
+					euro.checked = true;
+				};
+				updateAll();
+			};
+			
 			const getData = async () => {
 				const link = config.serverLink + additionalUrl;
 				let response = await fetch(link);
@@ -23,6 +61,7 @@
 				const data = await getData();
 				const len = data.length;
 				var total = 0;
+				var cTotal = 0;
 				var nds = 0;
 				var totalNds = 0;
 				for (var i = 0; i < len; i++) {
@@ -33,19 +72,19 @@
 							<td>${data[i]['articul']}</td>
 							<td>${data[i]['name']}</td>
 							<td>${data[i]['amount']}</td>
-							<td>${data[i]['price']}</td>
+							<td>${calcTotal(data[i]['price'])}</td>
 						</tr>
 					`;
 				}
 				
-				total = parseFloat(total).toFixed(3);
-				nds = (total / 100 * config.ndsPercent).toFixed(3);
-				totalNds = (parseFloat(total) + parseFloat(nds)).toFixed(3);
+				total = calcTotal(total);
+				cTotal = (total * (1 - ndsPercent)).toFixed(3);
+				nds = (total * ndsPercent).toFixed(3);
 				
-				document.getElementById('total').innerText += total.toString();
+				document.getElementById('total').innerText += cTotal.toString();
 				document.getElementById('nds').innerText += nds.toString();
-				document.getElementById('totalNds').innerText += totalNds.toString();
-				document.getElementById('info').innerText += `Всего наименований ${len}, на сумму ${totalNds} EUR`;
+				document.getElementById('totalNds').innerText += total.toString();
+				document.getElementById('info').innerText += `Всего наименований ${len}, на сумму ${total} ${prefix}`;
 			};
 		</script>
 		<div class="container">
@@ -65,6 +104,14 @@
 				</p>
 			</div>
 			<hr />
+			<div class="form-check form-switch">
+				<input type="checkbox" class="form-check-input" id="useEuro" checked onchange="changeCurrency()" />
+				<label class="form-check-label" for="useEuro">Использовать Евро</label>
+			</div>
+			<div class="form-check form-switch">
+				<input type="checkbox" class="form-check-input" id="useRuble" onchange="changeCurrency()" />
+				<label class="form-check-label" for="useRuble">Использовать Рубли</label>
+			</div>
 			<table class="table border border-dark table-bordered">
 				<thead class="thead-dark">
 					<tr>

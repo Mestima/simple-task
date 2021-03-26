@@ -1,6 +1,7 @@
 const config = {
 	serverLink: 'http://localhost:3000/',
-	ndsPercent: 20
+	ndsPercent: 20, // НДС составляет 20%
+	euroRate: 89.44 // 1 евро = 89.44 рубля
 };
 
 /*
